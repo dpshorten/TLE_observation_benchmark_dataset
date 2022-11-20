@@ -55,7 +55,7 @@ for i in range(len(MANOEUVRE_FILE_NAMES)):
 
 font = {'size': 16}
 matplotlib.rc('font', **font)
-plt.figure(figsize=(7, 10))
+plt.figure(figsize=(15, 10))
 ax = plt.gca()
 plt.gcf().subplots_adjust(left=0.21)
 satellite_names = list(reversed(SATELLITE_NAMES))
