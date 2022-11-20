@@ -1,6 +1,6 @@
 # TLE Satellite Observation Data
 
-This repository contains a dataset with Two Line Element (TLE) data for 15 satellites. Its purpose is to serve as a benchmark dataset for 
+This repository contains a dataset of Two Line Element (TLE) data for 15 satellites. Its purpose is to serve as a benchmark dataset for 
 studies examining changes in satellite orbits over larger time scales. It also contains the ground-truth manoeuvre timestamps
 for these satellites. Highly-accurate positional data from DORIS ground beacons is also included for some satellites.
 
