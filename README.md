@@ -29,25 +29,24 @@ The following table lists the satellites in the dataset:
 
 
 The folder `processed_files` contains the TLE files as well as the manoeuvre timestamps. The TLE files conform to the 
-[TLE standard](https://celestrak.org/NORAD/documentation/tle-fmt.php) as defined by NORAD. A good starting point for  
-working with them is the [Skyfield library](https://rhodesmill.org/skyfield/toc.html) 
+[TLE standard](https://celestrak.org/NORAD/documentation/tle-fmt.php) as defined by NORAD. A good starting point for working with them 
+is the [Skyfield library](https://rhodesmill.org/skyfield/toc.html) 
 
 Some brief advice on getting started using Skyfield in conjunction with this data. You can use the 
-[`tle_file()` function](https://rhodesmill.org/skyfield/api-iokit.html#:~:text=on%20its%20name.-,tle_file,-(url%2C ) 
-to load the TLE file into a list of Skyfield
-[`EarthSatellite` objects](https://rhodesmill.org/skyfield/api-satellites.html#skyfield.sgp4lib.EarthSatellite). 
+[`tle_file()`](https://rhodesmill.org/skyfield/api-iokit.html#:~:text=on%20its%20name.-,tle_file,-(url%2C ) function to load the TLE file into a list of Skyfield
+[`EarthSatellite`](https://rhodesmill.org/skyfield/api-satellites.html#skyfield.sgp4lib.EarthSatellite)  objects. 
 ([see here](https://rhodesmill.org/skyfield/earth-satellites.html#loading-a-tle-file) 
 for some general documentation on loading TLE files). Each `EarthSatellite` object is associated with the data published for one
 satellite epoch, which corresponds with a pair of lines in the original TLE file. One can call the `.at()` function on 
 these objects to get the satellite position in cartesian geocentric coordinates. One can then use the
-[`osculating_elements_of()` function](https://rhodesmill.org/skyfield/api-elements.html#skyfield.elementslib.osculating_elements_of)
+[`osculating_elements_of()`](https://rhodesmill.org/skyfield/api-elements.html#skyfield.elementslib.osculating_elements_of) function
 to convert this position into osculating keplerian elements. Moreover, by providing times other than the published epoch to the 
 `at()` function, it can also perform propagation of the position and osculating elements to different points in time. If one 
-is interested in monitoring changes in satellite orbits over longer time scales (weeks to years), we suggest that using
+is interested in monitoring changes in satellite orbits over longer time scales (weeks to years), we suggest that using the
 `at()` function is counter-productive, due to the fact that it uses models of orbiting satellites to add in non-Keplerian
 components of the orbit. This is discussed in detail in the paper *Wide-scale Monitoring of Satellite Lifetimes: Pitfalls and a Benchmark Dataset*. 
 Rather, we suggest using the mean Keplerian elements that are presented in the raw TLE records. One can still use Skyfield 
-to conveniently load and manipulate the data. These mean elements are stored as instance variables of the `model` variable of 
+to conveniently load and manipulate the data. The mean Keplerian elements are stored as instance variables of the `model` variable of 
 each `EarthSatellite` object. Note that these mean elements are also propagated and updated each time the `at()` method 
 is called on the `EarthSatellite` object.
 
@@ -57,7 +56,7 @@ as a piece of useful metadata. The timestamps are stored in an item named `manoe
 strings of [ISO8601](https://www.iso.org/iso-8601-date-and-time-format.html) timestamps which contain the UTC time and 
 date of each manoeuvre.
 
-The accurate positional data from the DORIS ground beacons is stored in the DORIS_beacon_positions directory in CSV files.
+The accurate positional data from the DORIS ground beacons is stored in the `DORIS_beacon_positions directory` in CSV files.
 
 The directory `plotting` contains the scripts for creating the plots in the paper
 *Wide-scale Monitoring of Satellite Lifetimes: Pitfalls and a Benchmark Dataset*.
@@ -69,6 +68,6 @@ The directory `plotting` contains the scripts for creating the plots in the pape
 - `plotting_propagation_accuracy_TLE_to_SP3.py` creates the plots in figure 7.
 - `plotting_DORIS_fourier_analysis.py` creates the plots in figures 8, 9 and 10.
 
-you will need to change the file paths in params.py
+you will need to change the file paths in `params.py`.
 
 The directory `dataset_formatting` contains scripts for manipulating the raw data into the compiled files.
