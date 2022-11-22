@@ -7,16 +7,6 @@ for these satellites. Highly-accurate positional data from DORIS ground beacons 
 Please see the paper: *Wide-scale Monitoring of Satellite Lifetimes: Pitfalls and a Benchmark Dataset* for a detailed 
 description of the dataset.
 
-The folder `processed_files` contains the TLE files as well as the manoeuvre timestamps. The TLE files conform to the 
-[TLE standard](https://celestrak.org/NORAD/documentation/tle-fmt.php) as defined by NORAD. A good starting point for  
-working with them is the [Skyfield library](https://rhodesmill.org/skyfield/toc.html) 
-([see here](https://rhodesmill.org/skyfield/earth-satellites.html#loading-a-tle-file) for documentation on loading TLE files).
-The manoeuvre timestamps are stored in YAML files. 
-These files also contain the satellite's [SATCAT number](https://en.wikipedia.org/wiki/Satellite_Catalog_Number) 
-as a piece of useful metadata. The timestamps are stored in an item named `manoeuvre_timestamps`. This is a list of
-strings of [ISO8601](https://www.iso.org/iso-8601-date-and-time-format.html) timestamps which contain the UTC time and 
-date of each manoeuvre.
-
 The following table lists the satellites in the dataset:
 
 | Name         |  SATCAT Number | First Manoeuvre | Last Manoeuvre |
@@ -37,9 +27,40 @@ The following table lists the satellites in the dataset:
 |Haiyang-2A    | 37781          | 2011-09-29      | 2020-06-10     |
 |TOPEX         | 22076          | 1992-08-18      | 2004-11-18     |
 
+
+The folder `processed_files` contains the TLE files as well as the manoeuvre timestamps. The TLE files conform to the 
+[TLE standard](https://celestrak.org/NORAD/documentation/tle-fmt.php) as defined by NORAD. A good starting point for  
+working with them is the [Skyfield library](https://rhodesmill.org/skyfield/toc.html) 
+
+Some brief advice on getting started using Skyfield in conjunction with this data. You can use the 
+[`tle_file()` function](https://rhodesmill.org/skyfield/api-iokit.html#:~:text=on%20its%20name.-,tle_file,-(url%2C ) 
+to load the TLE file into a list of Skyfield
+[`EarthSatellite` objects](https://rhodesmill.org/skyfield/api-satellites.html#skyfield.sgp4lib.EarthSatellite). 
+([see here](https://rhodesmill.org/skyfield/earth-satellites.html#loading-a-tle-file) 
+for some general documentation on loading TLE files). Each `EarthSatellite` object is associated with the data published for one
+satellite epoch, which corresponds with a pair of lines in the original TLE file. One can call the `.at()` function on 
+these objects to get the satellite position in cartesian geocentric coordinates. One can then use the
+[`osculating_elements_of()` function](https://rhodesmill.org/skyfield/api-elements.html#skyfield.elementslib.osculating_elements_of)
+to convert this position into osculating keplerian elements. Moreover, by providing times other than the published epoch to the 
+`at()` function, it can also perform propagation of the position and osculating elements to different points in time. If one 
+is interested in monitoring changes in satellite orbits over longer time scales (weeks to years), we suggest that using
+`at()` function is counter-productive, due to the fact that it uses models of orbiting satellites to add in non-Keplerian
+components of the orbit. This is discussed in detail in the paper *Wide-scale Monitoring of Satellite Lifetimes: Pitfalls and a Benchmark Dataset*. 
+Rather, we suggest using the mean Keplerian elements that are presented in the raw TLE records. One can still use Skyfield 
+to conveniently load and manipulate the data. These mean elements are stored as instance variables of the `model` variable of 
+each `EarthSatellite` object. Note that these mean elements are also propagated and updated each time the `at()` method 
+is called on the `EarthSatellite` object.
+
+The manoeuvre timestamps are stored in YAML files, also found in the directory `processed_files`. 
+These files also contain the satellite's [SATCAT number](https://en.wikipedia.org/wiki/Satellite_Catalog_Number) 
+as a piece of useful metadata. The timestamps are stored in an item named `manoeuvre_timestamps`. This is a list of
+strings of [ISO8601](https://www.iso.org/iso-8601-date-and-time-format.html) timestamps which contain the UTC time and 
+date of each manoeuvre.
+
 The accurate positional data from the DORIS ground beacons is stored in the DORIS_beacon_positions directory in CSV files.
 
-The directory `plotting` contains the scripts for creating the plots in that paper.
+The directory `plotting` contains the scripts for creating the plots in the paper
+*Wide-scale Monitoring of Satellite Lifetimes: Pitfalls and a Benchmark Dataset*.
 - `plotting_TLE_propagation_residuals.py` creates the plots in figures 2, 11, 12 and 13.
 - `plotting_osculating_mean_and_DORIS.py` creates the plots in figure 3.
 - `plotting_osculating_and_mean_diffs_distribution.py` creates the plots in figure 4.
