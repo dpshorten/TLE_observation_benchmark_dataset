@@ -28,7 +28,7 @@ def convert_skyfield_earthSatellites_into_dataframe_of_keplerian_elements(list_o
     list_of_LOAN_values = []
     list_of_AOP_values = []
     list_of_mean_anomaly_values = []
-    np_mean_kepler_elements = np.zeros((len(list_of_skyfield_earthSatellites) - date_offset, 6))
+    np_mean_kepler_elements = np.zeros((len(list_of_skyfield_earthSatellites) - date_offset, 7))
     np_ECI_coords = np.zeros((len(list_of_skyfield_earthSatellites) - date_offset, 6))
     np_RIC_coords = np.zeros((len(list_of_skyfield_earthSatellites) - date_offset, 6))
     #for skyfield_earth_satellite in list_of_skyfield_earth_satellites:
@@ -68,6 +68,13 @@ def convert_skyfield_earthSatellites_into_dataframe_of_keplerian_elements(list_o
         list_of_mean_anomaly_values.append((sky_field_keplerian_elements.mean_anomaly.radians / np.pi) * 180.0)
         np_mean_kepler_elements[i-date_offset, 0] = (list_of_skyfield_earthSatellites[i - date_offset].model.am *
                                                      list_of_skyfield_earthSatellites[i - date_offset].model.radiusearthkm)
+        np_mean_kepler_elements[i - date_offset, 1] = list_of_skyfield_earthSatellites[i - date_offset].model.em
+        np_mean_kepler_elements[i - date_offset, 2] = list_of_skyfield_earthSatellites[i - date_offset].model.im
+        np_mean_kepler_elements[i - date_offset, 3] = list_of_skyfield_earthSatellites[i - date_offset].model.Om
+        np_mean_kepler_elements[i - date_offset, 4] = list_of_skyfield_earthSatellites[i - date_offset].model.om
+        np_mean_kepler_elements[i - date_offset, 5] = list_of_skyfield_earthSatellites[i - date_offset].model.mm
+        np_mean_kepler_elements[i - date_offset, 6] = list_of_skyfield_earthSatellites[i - date_offset].model.nm
+
         np_ECI_coords[i-date_offset, :3] = r_ECI
         np_ECI_coords[i-date_offset, 3:] = v_ECI
         np_RIC_coords[i-date_offset, :3] = r_RIC
@@ -93,7 +100,13 @@ def convert_skyfield_earthSatellites_into_dataframe_of_keplerian_elements(list_o
         "v_U": np_RIC_coords[:, 3],
         "v_V": np_RIC_coords[:, 4],
         "v_W": np_RIC_coords[:, 5],
-        "mean semi-major axis": np_mean_kepler_elements[:, 0],
+        "average semi-major axis": np_mean_kepler_elements[:, 0],
+        "average eccentricity": np_mean_kepler_elements[:, 1],
+        "average inclination": np_mean_kepler_elements[:, 2],
+        "average right ascension of ascending node": np_mean_kepler_elements[:, 3],
+        "average argument of perigee": np_mean_kepler_elements[:, 4],
+        "average mean anomaly": np_mean_kepler_elements[:, 5],
+        "average mean motion": np_mean_kepler_elements[:, 6],
     })
     df_keplerian_elements = df_keplerian_elements.set_index("timestamp")
 

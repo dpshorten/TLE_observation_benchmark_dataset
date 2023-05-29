@@ -28,15 +28,15 @@ DIFF_NAMES = ["mean_to_mean_SMA_diff",
               ]
 
 Y_LABELS = [
-    "Difference in semi-major axes (km)",
-    "Difference in eccentricity",
-    "Difference in inclination (degrees)",
-    "Radial position difference (km)",
-    "In-track position difference (km)",
-    "Cross-track position difference (km)",
-    "Difference in semi-major axes (km)",
-    "Difference in eccentricity",
-    "Difference in inclination (degrees)",
+    "Diff. in SMA (km)",
+    "Diff. in eccentricity",
+    "Diff. in inc. (degrees)",
+    "Radial pos. diff. (km)",
+    "In-track pos. diff. (km)",
+    "Cross-track pos. diff. (km)",
+    "Diff. in SMA (km)",
+    "Diff. in eccentricity",
+    "Diff. in inc. (degrees)",
 ]
 
 Y_LIMS = [
@@ -68,8 +68,8 @@ params = TLE_Lifetime_Analysis_Parameters()
 f = open(params.manoeuver_files_directory + MANOEUVRES_FILE_NAME, "r")
 series_manoeuvre_time_stamps = pd.Series(yaml.safe_load(f)["manoeuvre_timestamps"])
 
-def calc_residuals_for_propagation_distance(propagation_distance):
-    list_of_skyfield_earth_satellites = skyfield_load.tle_file(params.TLE_files_directory + TLE_FILE_NAME, reload=False)
+def calc_residuals_for_propagation_distance(propagation_distance, tle_file_name):
+    list_of_skyfield_earth_satellites = skyfield_load.tle_file(params.TLE_files_directory + tle_file_name, reload=False)
     df_TLE_keplerian_elements_and_diffs = convert_skyfield_earthSatellites_into_dataframe_of_keplerian_elements(list_of_skyfield_earth_satellites)
     df_TLE_propagated_keplerian_elements = convert_skyfield_earthSatellites_into_dataframe_of_keplerian_elements(
         list_of_skyfield_earth_satellites, date_offset=propagation_distance)
@@ -88,7 +88,7 @@ def calc_residuals_for_propagation_distance(propagation_distance):
 
     mean_keplerian_elements_prop = np.zeros((len(list_of_skyfield_earth_satellites), 3))
     # reload the satellites to undo the .at() call above
-    list_of_skyfield_earth_satellites = skyfield_load.tle_file(params.TLE_files_directory + TLE_FILE_NAME, reload=False)
+    list_of_skyfield_earth_satellites = skyfield_load.tle_file(params.TLE_files_directory + tle_file_name, reload=False)
     for i in range(len(list_of_skyfield_earth_satellites) - propagation_distance):
         sat = list_of_skyfield_earth_satellites[i]
         sat.at(list_of_skyfield_earth_satellites[i + propagation_distance].epoch)
@@ -130,7 +130,7 @@ def calc_residuals_for_propagation_distance(propagation_distance):
 
 def plot_residuals(df_TLE_keplerian_elements, series_manoeuvre_time_stamps, propagation_distance, y_lims):
 
-    font = {'size': 20}
+    font = {'size': 28}
     matplotlib.rc('font', **font)
 
     for j in range(len(DIFF_NAMES)):
@@ -154,28 +154,30 @@ def plot_residuals(df_TLE_keplerian_elements, series_manoeuvre_time_stamps, prop
         # set the y vals at which to plot the manoeuvre timestamps
         np_vals_at_which_to_plot_manoeuvres = np.zeros(series_manoeuvre_time_stamps.shape[0])
         for i in range(len(series_manoeuvre_time_stamps)):
-            this_timestamp = series_manoeuvre_time_stamps.iloc[i]
-            index_of_closest_SMA_timestamp = np.searchsorted(df_TLE_keplerian_elements.index, this_timestamp, side="left") - 1
-            np_vals_at_which_to_plot_manoeuvres[i] = plotted_series.iloc[index_of_closest_SMA_timestamp]
+            #this_timestamp = series_manoeuvre_time_stamps.iloc[i]
+            #index_of_closest_SMA_timestamp = np.searchsorted(df_TLE_keplerian_elements.index, this_timestamp, side="left") - 1
+            #np_vals_at_which_to_plot_manoeuvres[i] = plotted_series.iloc[index_of_closest_SMA_timestamp]
+            if len(y_lims[j]) > 0:
+                np_vals_at_which_to_plot_manoeuvres[i] = y_lims[j][0] + 0.001
+            else:
+                np_vals_at_which_to_plot_manoeuvres[i] = 0
         plt.scatter(series_manoeuvre_time_stamps, np_vals_at_which_to_plot_manoeuvres, marker='x', s=150, c='r', label="manoeuvre",
                     linewidths=2)
-
-
 
         if len(y_lims[j]) > 0:
             plt.ylim(y_lims[j])
         plt.ylabel(Y_LABELS[j])
         plt.xticks(rotation=20)
         ax = plt.gca()
-        ax.tick_params(axis='x', which='major', labelsize=26)
+        #ax.tick_params(axis='x', which='major', labelsize=26)
         #ax.tick_params(axis='y', which='major', labelsize=23)
         plt.xlim([datetime.datetime.fromisoformat(DATE_RANGE[0]),
                   datetime.datetime.fromisoformat(DATE_RANGE[1])])
         plt.legend()
         plt.tight_layout()
-        plt.savefig(params.figs_output_directory + DIFF_NAMES[j] + "_offset" + str(propagation_distance) + ".png")
+        plt.savefig(params.figs_output_directory + DIFF_NAMES[j] + "_offset" + str(propagation_distance) + ".pdf")
         #plt.show()
 
 for i in range(len(PROPAGATION_DISTANCES)):
-    df_TLE_keplerian_elements_and_diffs = calc_residuals_for_propagation_distance(PROPAGATION_DISTANCES[i])
+    df_TLE_keplerian_elements_and_diffs = calc_residuals_for_propagation_distance(PROPAGATION_DISTANCES[i], TLE_FILE_NAME)
     plot_residuals(df_TLE_keplerian_elements_and_diffs, series_manoeuvre_time_stamps, PROPAGATION_DISTANCES[i], Y_LIMS[i])

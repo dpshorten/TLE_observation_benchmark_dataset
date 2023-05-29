@@ -110,7 +110,7 @@ def plot_power_spectrum_of_elemnt(power_spectrums, frequencies, element_index):
     y_mesh_points.append(len(NAMES))
 
     plt.pcolormesh(frequencies, y_mesh_points, power_spectrums[0:(-1)], cmap=matplotlib.colormaps["viridis"],
-                   vmin = VMINS[element_index], shading='flat')
+                   vmin = VMINS[element_index], shading='flat', linewidth=0, rasterized=True)
     cbar = plt.colorbar()
     cbar.ax.set_ylabel('log amplitude', rotation=270, labelpad=15)
     plt.xlim([0, 10])
@@ -119,7 +119,7 @@ def plot_power_spectrum_of_elemnt(power_spectrums, frequencies, element_index):
     fig.axes[0].set_yticklabels(NAMES)
     plt.tight_layout()
     #plt.show()
-    plt.savefig(params.figs_output_directory + "fourier_" + ORBITAL_ELEMENTS_FOR_OUTPUT_FIG_NAMES[element_index] + ".png")
+    plt.savefig(params.figs_output_directory + "fourier_" + ORBITAL_ELEMENTS_FOR_OUTPUT_FIG_NAMES[element_index] + ".pdf")
     plt.clf()
 
 

@@ -8,8 +8,8 @@ import matplotlib.pyplot as plt
 import matplotlib
 from params import TLE_Lifetime_Analysis_Parameters
 
-DORIS_DATA_DIR = "../DORIS_beacon_positions/"
-TLE_DATA_DIR = "../processed_files/"
+DORIS_DATA_DIR = "/home/david/Projects/TLE_observation_benchmark_dataset/DORIS_beacon_positions/"
+TLE_DATA_DIR = "/home/david/Projects/TLE_observation_benchmark_dataset/processed_files/"
 
 DORIS_FILE_NAMES = [
     "DORIS-beacons_Sentinel-3A.csv",
@@ -27,12 +27,12 @@ SATELLITE_NAMES = [
 ]
 
 OUTPUT_FIG_FILE_NAMES = [
-    "propagation_error_S3A.png",
-    "propagation_error_HY2A.png",
+    "propagation_error_S3A.pdf",
+    "propagation_error_HY2A.pdf",
 ]
 
 NUM_SAMPLES = 100
-DAYS_TO_SAMPLE = [0, 0.5, 1, 1.5, 2, 2.5, 5, 10, 20]
+DAYS_TO_SAMPLE = [0, 0.5, 1, 1.5, 2, 2.5, 5, 10, 20, 50]
 buffer_from_end = DAYS_TO_SAMPLE * 24 * 60
 
 ts = load.timescale()
@@ -105,4 +105,5 @@ for i in range(len(OUTPUT_FIG_FILE_NAMES)):
     plt.ylabel("Abs. diff. in semi-major axis (km)")
     plt.xlabel("days of propagation")
     plt.savefig(params.figs_output_directory + OUTPUT_FIG_FILE_NAMES[i])
+    #plt.show()
     plt.clf()

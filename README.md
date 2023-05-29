@@ -68,6 +68,8 @@ The directory `plotting` contains the scripts for creating the plots in the pape
 - `plotting_propagation_accuracy_TLE_to_SP3.py` creates the plots in figure 7.
 - `plotting_DORIS_fourier_analysis.py` creates the plots in figures 8, 9 and 10.
 
+The directory `utilities` contains some useful scripts for inspecting the data.
+
 you will need to change the file paths in `params.py`.
 
 The directory `dataset_formatting` contains scripts for manipulating the raw data into the compiled files.
